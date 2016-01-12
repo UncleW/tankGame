@@ -1,14 +1,12 @@
 package controller;
-import java.awt.Event.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
 
+import model.Bullet;
 import util.finalData;
-
-import java.awt.*;
-
 import view.tankPanel;
-import view.tankView;
+
 public class mainHandler implements KeyListener{
 	private tankPanel tp;
 	public mainHandler(){
@@ -20,51 +18,49 @@ public class mainHandler implements KeyListener{
 	}
 	public void keyPressed(KeyEvent e){
 		if (e.getKeyCode()==KeyEvent.VK_UP || e.getKeyCode()==KeyEvent.VK_W){
-			tp.getHt1().moveUp(finalData.speedLevel_1);
-			tp.getHt1().setDirect(finalData.direction_up);
+			tp.getHt1().tankMove(finalData.direction_up);
 		}
 		else if (e.getKeyCode()==KeyEvent.VK_DOWN || e.getKeyCode()==KeyEvent.VK_S){
-			tp.getHt1().moveDown(finalData.speedLevel_1);
-			tp.getHt1().setDirect(finalData.direction_down);
+			tp.getHt1().tankMove(finalData.direction_down);
 		}
 		else if (e.getKeyCode()==KeyEvent.VK_LEFT || e.getKeyCode()==KeyEvent.VK_A){
-			tp.getHt1().moveLeft(finalData.speedLevel_1);
-			tp.getHt1().setDirect(finalData.direction_left);
+			tp.getHt1().tankMove(finalData.direction_left);
 		}
 		else if (e.getKeyCode()==KeyEvent.VK_RIGHT || e.getKeyCode()==KeyEvent.VK_D){
-			tp.getHt1().moveRight(finalData.speedLevel_1);
-			tp.getHt1().setDirect(finalData.direction_right);
+			tp.getHt1().tankMove(finalData.direction_right);
 		}
 		if (e.getKeyCode()==KeyEvent.VK_SPACE){
 			tp.getHt1().ShotBullet();
-			
-			
-			tp.getEts().get(0).ShotBullet();
-			tp.getHt1().setAlive(false);
-			/*
-			tp.getHt1().setIsAli(1);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			tp.getHt1().setIsAli(2);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			tp.getHt1().setIsAli(3);//*/
-			//System.out.println(tp.getHt1().getBu().getX());
-			//System.out.println(tp.getHt1().getBu().getY());
-		}
-		if(e.getKeyCode()==KeyEvent.VK_J){
-			tp.getHt1().getBu().setAlive(1);
+			//tp.getHt1().setAlive(false);
+			//System.out.println(tp.getHt1().getBullets().size());
 		}
 		
-		tp.repaint();
+		
+		
+		
+		
+		
+		
+		
+		
+		//TODO !!最后要删的东西!!
+		//按下J键子弹爆炸，按下K键显示所有子弹位置的X值；；仅测试用    @TestOnly
+		if(e.getKeyCode()==KeyEvent.VK_J){
+			if(tp.getHt1().getBullets().get(0)!=null){
+				//tp.getHt1().getBullets().get(0).setInTank(true);
+			}
+		}
+		if(e.getKeyCode()==KeyEvent.VK_K){
+			for (int i=0;i<tp.getHt1().getBullets().size();i++){
+				//System.out.println(tp.getHt1().getBullets().get(i).getX());
+			}
+		}
+		if (e.getKeyCode()==KeyEvent.VK_R){
+			tp.getHt1().setBullets(new Vector<Bullet>());
+			for(int i=0;i<3;i++){
+				tp.getEts().get(i).setBullets(new Vector<Bullet>());
+			}
+		}
 		
 	}
 	@Override

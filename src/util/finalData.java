@@ -2,36 +2,41 @@ package util;
 
 public interface finalData {
 	
-	//ÎÒµÄÌ¹¿Ë¿ªÊ¼³öÏÖÊ±µÄÎ»ÖÃ
+	//å¦å…‹åˆå§‹ä½ç½®
 	static int heroT_x=190;
 	static int heroT_y=200;
 	
 	
-	//Ì¹¿Ë»î¶¯·¶Î§
+	//Ì¹å¦å…‹æ´»åŠ¨ç•Œé¢å®½é«˜
 	static int tankPanWidth=400;
 	static int tankPanHeight=300;
 	
-	//Ì¹¿ËÔÚÆÁÄ»ÉÏµÄ¿í¶È¸ß¶ÈÏñËØ
+	//Ì¹å¦å…‹å ä½å®½é«˜
 	static int tankHeight=30;
 	static int tankwidth=20;
 	
-	//ÉèÖÃÌ¹¿ËËÙ¶È
-	static int speedLevel_1=5;
-	static int speedLevel_2=2;
+	//é€Ÿåº¦è®¾å®š
+	static int speedLevel_1=5;//ç©å®¶å¦å…‹é€Ÿåº¦
+	static int speedLevel_2=2;//æ•Œäººä¸€å·å¦å…‹é€Ÿåº¦
 	static int speedLevel_3=3;
 	static int speedLevel_4=4;
-	//Ì¹¿ËÀàĞÍ
+	static int bulletSpeed=2;
+	//Ì¹å¦å…‹ç§ç±»
 	static int heroTankType=0;
 	static int enemyTankType=1;
 	
-	//µĞÈËÌ¹¿ËÊıÁ¿
+	//æ•Œäººå¦å…‹æ•°é‡
 	static int enemyTanknum=3;
 	
 	
-	//Ì¹¿Ë·½Ïò
+	//Ì¹æ–¹å‘è®¾å®š
 	static int direction_up=0;
 	static int direction_right=1;
 	static int direction_down=2;
 	static int direction_left=3;
+	
+	//æ•Œäººçš„å„ç§æ¦‚ç‡
+	static int moveChance=80;
+	static int shootChance=20;
 	
 }

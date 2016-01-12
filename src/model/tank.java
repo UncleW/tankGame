@@ -1,24 +1,27 @@
-/**
- * 
- */
 package model;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.*;
+
+import util.finalData;
 
 /**
  * @author Administrator
- *
+ * 各种坦克的父类，包含发射子弹，显示坦克，显示子弹，更新位置等方法
  */
 public class tank {
 	int x;
-	int y;//̹�˳�ʼλ��xyֵ
-	int direct;//����̹�˷���
-	int speed;//̹���ƶ��ٶ�
-	int tankType;//̹�����ͣ�0���̹�ˣ�1~3����̹��
+	int y;//̹坦克出现坐标
+	int direct;//坦克炮口方向
+	int speed;//̹坦克移动速度
+	int tankType;//̹坦克类型，0~3分别表示玩家坦克、敌人坦克、敌人加强坦克、敌人特强坦克、敌人boss
 	Bullet bu;
 	boolean isAlive;
 	int isAli;
+	Thread tankBullet;
+	Vector<Bullet> bullets;
+	Vector<Thread> tankBullets;
 	public tank(int x,int y){
 		this.x=x;
 		this.y=y;
@@ -27,20 +30,23 @@ public class tank {
 	public void ShotBullet(){
 		switch(direct){
 			case 0:
-				bu=new Bullet(this.x+10,this.y,direct);
+				this.bullets.add(new Bullet(this.x+10,this.y,direct));
 				break;
 			case 1:
-				bu=new Bullet(this.x+30,this.y+10,direct);
+				this.bullets.add(new Bullet(this.x+30,this.y+10,direct));
 				break;
 			case 2:
-				bu=new Bullet(x+10,y+30,direct);
+				this.bullets.add(new Bullet(x+10,y+30,direct));
 				break;
 			case 3:
-				bu=new Bullet(x,y+10,direct);
+				this.bullets.add(new Bullet(x,y+10,direct));
 				break;
 		}
-		Thread t=new Thread(bu);
-		t.start();
+		if(!bullets.isEmpty()){
+			this.tankBullet=new Thread(bullets.get(bullets.size()-1));
+		}
+		this.tankBullet.start();
+		this.tankBullets.add(tankBullet);
 	}
 	public void tankDraw(Graphics g){
 		switch(tankType){
@@ -66,7 +72,6 @@ public class tank {
 				g.drawLine(x+10, y, x+10, y+10);
 				break;
 			case 1:
-				
 				g.fillRect(x+2, y, 26, 5);
 				g.drawRect(x+5, y+5, 20, 10);
 				g.fillRect(x+2, y+15, 26, 5);
@@ -88,60 +93,47 @@ public class tank {
 				g.fillOval(x+10, y+5, 10, 10);
 				g.drawLine(x, y+10, x+10, y+10);
 				break;
-				
-			
 		}
 	}
-	public void tankBlowStep1(Graphics g){
-		g.fillRect(x, y+2, 5, 26);
-		g.drawRect(x+5, y+5, 10, 20);
-		g.fillRect(x+15, y+2, 5, 26);
-		g.fillOval(x+5, y+10, 10, 10);
-		g.drawLine(x+10, y, x+10, y+10);
-		g.setColor(Color.red);
-		g.drawArc(x+5, y+0, 5, 10, 0, 180);
-		g.drawArc(x+10, y, 5, 10, 0, 180);
-		g.drawArc(x, y+5, 10, 5, 90, 180);
-		g.drawArc(x, y+10, 10, 5, 90, 180);
-		g.drawArc(x, y+15, 10, 5, 90, 180);
-		g.drawArc(x+10, y+5, 10, 5, 270, 180);
-		g.drawArc(x+10, y+10, 10, 5, 270, 180);
-		g.drawArc(x+10, y+15, 10, 5, 270, 180);
-		g.drawArc(x+5, y+15, 5, 10, 180, 180);
-		g.drawArc(x+10, y+15, 5, 10, 180, 180);
-		
-	}
-	public void tankBlowStep2(Graphics g){
-		g.setColor(Color.red);
-		g.drawArc(x+5, y, 10, 20, 60, 60);
-		g.drawArc(x, y+5, 20, 10, 150, 60);
-		g.drawArc(x+5, y, 10, 20, 240, 60);
-		g.drawArc(x, y+5, 20, 10, 330, 60);
-		g.drawLine(x+2,y+2,x+7,y+7);
-		g.drawLine(x+13,y+13,x+18,y+18);
-		g.drawLine(x+18,y+2,x+13,y+7);
-		g.drawLine(x+2,y+18,x+7,y+13);
+	public void drawBullet(Graphics g){
+		for (int i=0;i<this.getBullets().size();i++){
+			if (bullets.get(i)!=null&&(bullets.get(i).isAlive())&&!bullets.get(i).isInTank()){
+				g.setColor(Color.yellow);
+				g.draw3DRect(bullets.get(i).getX(), bullets.get(i).getY(), 1, 1, false);
+			}
+			else if(bullets.get(i)!=null&&(bullets.get(i).isInTank())){
+				bullets.get(i).blow(g);
+			}
+			if(!bullets.get(i).isAlive()){
+				bullets.remove(i);
+			}
+		}
 	}
 	
-	
-	
-	
-	
-	public void moveUp(int speed){
-		this.y-=speed;
-	}
-	public void moveDown(int speed){
-		this.y+=speed;
-	}
-	public void moveLeft(int speed){
-		this.x-=speed;
-	}
-	public void moveRight(int speed){
-		this.x+=speed;
+	public void tankMove(int direct){
+		switch (direct){
+		case 0:
+			if(y>0){this.y-=speed;}
+			this.direct=direct;
+			break;
+		case 1:
+			if(x<finalData.tankPanWidth-40){this.x+=speed;}
+			this.direct=direct;
+			break;
+		case 2:
+			if(y<finalData.tankPanHeight-40){this.y+=speed;}
+			this.direct=direct;
+			break;
+		case 3:
+			if(x>0)this.x-=speed;
+			this.direct=direct;
+			break;
+		}
 	}
 	
 	
 	
+	//getters and setters
 	public int getX() {
 		return x;
 	}
@@ -189,10 +181,23 @@ public class tank {
 	public void setIsAli(int isAli) {
 		this.isAli = isAli;
 	}
-	
-	
-	
-	
-	
+	public Thread getTankBullet() {
+		return tankBullet;
+	}
+	public void setTankBullet(Thread tankBullet) {
+		this.tankBullet = tankBullet;
+	}
+	public Vector<Bullet> getBullets() {
+		return bullets;
+	}
+	public void setBullets(Vector<Bullet> bullets) {
+		this.bullets = bullets;
+	}
+	public Vector<Thread> getTankBullets() {
+		return tankBullets;
+	}
+	public void setTankBullets(Vector<Thread> tankBullets) {
+		this.tankBullets = tankBullets;
+	}
 	
 }

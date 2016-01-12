@@ -3,16 +3,19 @@ package model;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import util.finalData;
+
 public class Bullet implements Runnable{
 	private int x;
 	private int y;
 	private int direct;
-	private int isAlive;
+	private boolean isInTank,isAlive;
 	public Bullet(int x,int y,int direct){
 		this.x=x;
 		this.y=y;
 		this.direct=direct;
-		this.isAlive=0;
+		this.isInTank=false;//鏄惁纰板埌鍧﹀厠锛堝紩鍑虹垎鐐告晥鏋滐級
+		this.isAlive=true;
 	}
 	public int getX() {
 		return x;
@@ -22,41 +25,37 @@ public class Bullet implements Runnable{
 	}
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		while(true){
+		while(isAlive&&!isInTank){
+			
 			switch (direct){
 			case 0:
 				//move up
-				y-=4;
+				y-=finalData.bulletSpeed;
 				break;
 			case 1:
 				//move right
-				x+=4;
+				x+=finalData.bulletSpeed;
 				break;
 			case 2:
 				//move down 
-				y+=4;
+				y+=finalData.bulletSpeed;
 				break;
 			case 3:
 				//move left
-				x-=4;
+				x-=finalData.bulletSpeed;
 				break;
-			}//TODO 子弹何时死亡？？
+			}
 			
 			if (x<0||x>400||y<0||y>300){
-				this.isAlive=1;
+				this.isAlive=false;
 				break;
 			}
-			
-			
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+			delayMs(50);
 		}
+		delayMs(500);
+		this.isInTank=false;
+		this.isAlive=false;
+		
 	}
 	public void blow(Graphics g){
 		int x=this.x-10;
@@ -70,13 +69,26 @@ public class Bullet implements Runnable{
 		g.drawLine(x+13,y+13,x+18,y+18);
 		g.drawLine(x+18,y+2,x+13,y+7);
 		g.drawLine(x+2,y+18,x+7,y+13);
+		this.isInTank=true;
 	}
 	
-	public int isAlive() {
+	public boolean isInTank() {
+		return isInTank;
+	}
+	public void setInTank(boolean isInTank) {
+		this.isInTank = isInTank;
+	}
+	public boolean isAlive() {
 		return isAlive;
 	}
-	public void setAlive(int isAlive) {
-		this.isAlive = isAlive;
+	public void setAlive(boolean isAli) {
+		this.isAlive = isAli;
 	}
-	
+	public void delayMs(int i){
+		try {
+			Thread.sleep(i);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }

@@ -1,8 +1,9 @@
 package model;
 
+import java.util.*;
 import util.finalData;
 
-public class enemyTank extends tank{
+public class enemyTank extends tank implements Runnable{
 	public enemyTank(int x,int y){
 		super(x,y);
 		this.x=x;
@@ -10,36 +11,46 @@ public class enemyTank extends tank{
 		this.direct=2;
 		this.speed=finalData.speedLevel_2;
 		this.tankType=2;
+		this.isAlive=true;
+		this.isAli=0;
+		this.bullets=new Vector<Bullet>();
+		this.tankBullets=new Vector<Thread>();
 	}
-	/*
-	public int getX() {
-		return x;
+
+	@Override
+	public void run() {
+		while(isAlive){
+			//随机运动
+			if(getChance(finalData.moveChance)){
+				this.move();
+			}
+			//随机发射子弹
+			if(getChance(finalData.shootChance)){
+				this.ShotBullet();
+			}
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	public void setX(int x) {
-		this.x = x;
+	
+	public boolean getChance(int j){
+		Random rd=new Random();
+		int rdNum=Math.abs(rd.nextInt()%100);
+		if(rdNum<j){
+			return true;
+		}
+		else return false;
 	}
-	public int getY() {
-		return y;
+	public void move(){
+		if(getChance(20)){
+			if(getChance(50)){
+				this.direct=(this.direct+1)%4;
+			}
+			else this.direct=Math.abs((this.direct-1)%4);
+		}
+		this.tankMove(direct);
 	}
-	public void setY(int y) {
-		this.y = y;
-	}
-	public int getSpeed() {
-		return speed;
-	}
-	public void setSpeed(int speed) {
-		this.speed = speed;
-	}
-	public int getDirect(){
-		return direct;
-	}
-	public void setDirect(int direct){
-		this.direct=direct;
-	}
-	public int getTankType(){
-		return tankType;
-	}
-	public void setTankType(int tankType){
-		this.tankType=tankType;
-	}//*/
 }

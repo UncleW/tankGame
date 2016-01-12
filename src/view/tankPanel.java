@@ -11,131 +11,45 @@ import model.*;
 import util.finalData;
 
 /**
- * @author 
+ * @author donutgames@126.com
  *
  */
 public class tankPanel extends JPanel implements Runnable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 868647902951996246L;
 	private int direct=0;
 	private tank ht1;
 	Vector<enemyTank> ets=new Vector<enemyTank>();
 	public tankPanel(){
 		ht1=new heroTank(finalData.heroT_x,finalData.heroT_y);
 		for (int i=0;i<finalData.enemyTanknum;i++){
-			ets.add(new enemyTank((i+1)*50,0));
+			enemyTank et=new enemyTank((i+1)*50,100);
+			new Thread(et).start();
+			ets.add(et);
 			
 		}
 	}
 	public void paint(Graphics g){
-		
 		super.paint(g);
+		//显示本方坦克
 		g.fillRect(0, 0, finalData.tankPanWidth, finalData.tankPanHeight);
 		ht1.tankDraw(g);
+		//显示子弹
+		ht1.drawBullet(g);
 		
-		/*
-		if(ht1.isAlive()){
-			ht1.tankDraw(g);
-			System.out.println("alive");
-		}else {
-			switch(ht1.getIsAli()){
-			case 1:
-				ht1.tankBlowStep1(g);
-				break;
-			case 2:
-				ht1.tankBlowStep2(g);
-				break;
-			case 3:
-				break;
-			}
-			
-			/*
-			//ht1.tankBlowStep1(g);
-			System.out.println("dead");
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ht1.tankBlowStep2(g);
-			System.out.println("dead2");
-		}	//*/
-		
+		//显示敌方坦克与对应的子弹
 		for (int i=0;i<ets.size();i++){
-			ets.get(i).tankDraw(g);
-			//generateTank(ets.get(i),g);
-		}
-		//�����ӵ�
-		if (ht1.getBu()!=null&&(ht1.getBu().isAlive()==0)){
-			g.draw3DRect(ht1.getBu().getX(), ht1.getBu().getY(), 1, 1, false);
-		}
-		else if(ht1.getBu()!=null&&(ht1.getBu().isAlive()==1)){
-			ht1.getBu().blow(g);
-			ht1.getBu().setAlive(ht1.getBu().isAlive()+1);
-		}
-		if(ets.get(0).getBu()!=null&&(ets.get(0).getBu().isAlive()==0)){
-			g.draw3DRect(ets.get(0).getBu().getX(), ets.get(0).getBu().getY(), 1, 1, false);
-		}
-	}
-
-	public void generateTank(tank t,Graphics g){
-		int x=t.getX();
-		int y=t.getY();
-		int type=t.getTankType();
-		int direct=t.getDirect();
-		switch(type){
-			case 0:
-				g.setColor(Color.yellow);
-				break;
-			case 1:
-				g.setColor(Color.cyan);
-				break;
-			case 2:
-				g.setColor(Color.green);
-				break;
-			case 3:
-				g.setColor(Color.red);
-				break;
-		}
-		switch(direct){
-			case 0:
-				g.fillRect(x, y+2, 5, 26);
-				g.drawRect(x+5, y+5, 10, 20);
-				g.fillRect(x+15, y+2, 5, 26);
-				g.fillOval(x+5, y+10, 10, 10);
-				g.drawLine(x+10, y, x+10, y+10);
-				break;
-			case 1:
-				
-				g.fillRect(x+2, y, 26, 5);
-				g.drawRect(x+5, y+5, 20, 10);
-				g.fillRect(x+2, y+15, 26, 5);
-				g.fillOval(x+10, y+5, 10, 10);
-				g.drawLine(x+20, y+10, x+30, y+10);
-				break;
-				//*/
-			case 2:
-				g.fillRect(x, y+2, 5, 26);
-				g.drawRect(x+5, y+5, 10, 20);
-				g.fillRect(x+15, y+2, 5, 26);
-				g.fillOval(x+5, y+10, 10, 10);
-				g.drawLine(x+10, y+20, x+10, y+30);
-				break;
-			case 3:
-				g.fillRect(x+2, y, 26, 5);
-				g.drawRect(x+5, y+5, 20, 10);
-				g.fillRect(x+2, y+15, 26, 5);
-				g.fillOval(x+10, y+5, 10, 10);
-				g.drawLine(x, y+10, x+10, y+10);
-				break;
-				
-			
+			if(ets.get(i)!=null&&ets.get(i).isAlive()){
+				ets.get(i).tankDraw(g);
+				ets.get(i).drawBullet(g);
+			}
 		}
 	}
 	
-	/*
-	 * 
-	 * 
-	 * //*/
+	
+	
 	public int getDirect() {
 		return direct;
 	}
@@ -160,21 +74,31 @@ public class tankPanel extends JPanel implements Runnable{
 		// TODO Auto-generated method stub
 		while(true){
 			try {
-				Thread.sleep(200);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			this.repaint();
-			
-			
-			
-			
+			bulletOnEnemy();
 		}
 	}
 	public void bulletOnEnemy(){
-		if(true){
-			//this.ets.get(0)
+		int bu_x;
+		int bu_y;
+		for (int i=0;i<ht1.getBullets().size();i++){
+			bu_x=ht1.getBullets().get(i).getX();
+			bu_y=ht1.getBullets().get(i).getY();
+			for (int j=0;j<ets.size();j++){
+				if (ets.get(j)!=null&&
+						bu_x<=(ets.get(j).getX()+finalData.tankwidth)&&
+						bu_y<=(ets.get(j).getY()+finalData.tankHeight)&&
+						bu_x>=(ets.get(j).getX())&&
+						bu_y>=(ets.get(j).getY())){
+					ets.get(j).setAlive(false);
+					ht1.getBullets().get(i).setInTank(true);
+					ets.remove(j);
+				}
+			}
 		}
 	}
 	

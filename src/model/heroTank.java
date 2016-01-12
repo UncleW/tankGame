@@ -3,6 +3,8 @@
  */
 package model;
 
+import java.util.Vector;
+
 import util.finalData;
 
 /**
@@ -19,5 +21,7 @@ public class heroTank extends tank {
 		this.tankType=finalData.heroTankType;
 		this.isAlive=true;
 		this.isAli=0;
+		this.bullets=new Vector<Bullet>();
+		this.tankBullets=new Vector<Thread>();
 	}
 }
