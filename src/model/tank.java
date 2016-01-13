@@ -48,7 +48,7 @@ public class tank {
 		this.tankBullet.start();
 		this.tankBullets.add(tankBullet);
 	}
-	public void tankDraw(Graphics g){
+	public void drawTank(Graphics g){
 		switch(tankType){
 			case 0:
 				g.setColor(Color.yellow);

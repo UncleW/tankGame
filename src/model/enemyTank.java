@@ -29,7 +29,7 @@ public class enemyTank extends tank implements Runnable{
 				this.ShotBullet();
 			}
 			try {
-				Thread.sleep(500);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
